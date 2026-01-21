@@ -644,11 +644,14 @@
 
         // Handle Public Share Confirmation
         confirmShareBtn.addEventListener('click', () => {
-             // Direct Google Search with Review Dialog open
-             // Uses specific CID and LRD parameters to match the user's screenshot exactly
-             // q=...Reviews ensures the background is the search page
-             // #lrd=... triggers the write review dialog
-             const url = "https://www.google.com/search?q=INFOYASHONAND+TECHNOLOGY+PVT+LTD+Reviews&ludocid=1115735271034614450#lrd=0x0:0xf7be3514d6472b2,3";
+             // Redirect to Google Search with Review Modal (LRD)
+             // Using regex to ensure clean URL construction
+             const query = "INFOYASHONAND TECHNOLOGY PVT LTD, MSEB Road, opp. Safa Bakery, Pearl Enclave, Vishrambag, Sangli, Maharashtra";
+             const lrd = "0x3bc1235a5e226855:0x0f7be3514d6472b2,3"; 
+             const url = `https://www.google.com/search?q=${encodeURIComponent(query)}#lrd=${lrd}`;
+             
+             // Open in new tab might work better for some browser security settings regarding has changes
+             // But user asked for redirect.
              window.location.href = url;
         });
     </script>
