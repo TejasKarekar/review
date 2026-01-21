@@ -343,6 +343,75 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
         }
 
+        .public-share-message {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            background-color: #202124;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            padding: 24px;
+            box-sizing: border-box;
+        }
+
+        .share-content {
+            background: #303134;
+            padding: 32px 24px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .share-content h2 {
+            font-size: 22px;
+            margin: 16px 0 8px 0;
+            color: #e8eaed;
+        }
+
+        .share-content p {
+            color: #9aa0a6;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .share-buttons {
+            display: flex;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .share-btn-primary {
+            flex: 1;
+            background-color: #8ab4f8;
+            color: #202124;
+            border: none;
+            padding: 12px;
+            border-radius: 24px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .share-btn-secondary {
+            flex: 1;
+            background-color: transparent;
+            color: #8ab4f8;
+            border: 1px solid #5f6368;
+            padding: 12px;
+            border-radius: 24px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
         /* Google Sign In Button Container - Hidden if logged in/simulated */
         #g_id_onload {
             display: none; 
@@ -427,6 +496,20 @@
         </footer>
     </div>
 
+    <!-- Public Share Confirmation Modal -->
+    <div class="public-share-message" id="publicShareMessage">
+        <div class="share-content">
+            <span class="material-icons" style="font-size: 48px; color: #8ab4f8;">thumb_up</span>
+            <h2>Thank you for your feedback!</h2>
+            <p>Would you like to share this publicly on Google Reviews?</p>
+            
+            <div class="share-buttons">
+                <button class="share-btn-secondary" onclick="location.reload()">No, thanks</button>
+                <button class="share-btn-primary" id="confirmShareBtn">Yes, Post Review</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Thank You Screen with Animation -->
     <div class="thank-you-message" id="thankYouMessage">
         <!-- Shapes -->
@@ -499,6 +582,12 @@
         const stars = document.querySelectorAll('.star');
         const postBtn = document.getElementById('postBtn');
         const thankYouMessage = document.getElementById('thankYouMessage');
+        const publicShareMessage = document.getElementById('publicShareMessage');
+        const confirmShareBtn = document.getElementById('confirmShareBtn');
+        
+        // Business details for redirection
+        const businessName = "INFOYASHONAND TECHNOLOGY PVT LTD";
+        
         let currentRating = 0;
 
         stars.forEach(star => {
@@ -540,7 +629,7 @@
             if (currentRating === 0) return;
 
             if (currentRating <= 3) {
-                // Show Thank You - Do NOT post to Google
+                // Show Internal Thank You (Low/Mid Rating)
                 // Sync avatar just in case
                 const avatarImg = document.querySelector('#userAvatar img');
                 if(avatarImg) {
@@ -548,14 +637,19 @@
                 }
                 thankYouMessage.style.display = 'flex';
             } else {
-                // >= 4: Post to Google
-                const businessName = "INFOYASHONAND TECHNOLOGY PVT LTD";
-                // Redirect user to Google Maps/Search review composer
-                // Note: Direct "Write Review" links usually require a CID or PlaceID. 
-                // We fallback to a search which shows the business card with "Write a review"
-                const url = `https://www.google.com/search?q=${encodeURIComponent(businessName + " reviews")}`;
-                window.location.href = url;
+                // >= 4 Stars: Show Public Share Confirmation
+                publicShareMessage.style.display = 'flex';
             }
+        });
+
+        // Handle Public Share Confirmation
+        confirmShareBtn.addEventListener('click', () => {
+             // Direct Google Search with Review Dialog open
+             // Uses specific CID and LRD parameters to match the user's screenshot exactly
+             // q=...Reviews ensures the background is the search page
+             // #lrd=... triggers the write review dialog
+             const url = "https://www.google.com/search?q=INFOYASHONAND+TECHNOLOGY+PVT+LTD+Reviews&ludocid=1115735271034614450#lrd=0x0:0xf7be3514d6472b2,3";
+             window.location.href = url;
         });
     </script>
 </body>
